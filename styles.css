@@ -47,27 +47,48 @@ body {
   margin: 0;
   font-family: "Plus Jakarta Sans", system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
   color: var(--text);
-
-  /* Smoother blending: larger radials + gentler linear gradient (no sudden stop) */
-  background:
-    radial-gradient(1200px 900px at 10% 12%, rgba(199, 107, 152, 0.32), transparent 62%),
-    radial-gradient(1100px 900px at 88% 18%, rgba(240, 159, 156, 0.26), transparent 66%),
-    radial-gradient(1200px 900px at 70% 92%, rgba(252, 195, 163, 0.18), transparent 62%),
-    radial-gradient(900px 700px at 35% 75%, rgba(99, 43, 108, 0.22), transparent 60%),
-    linear-gradient(180deg, #270f36 0%, #210b30 55%, #17071f 100%);
-
   overflow-x: hidden;
+
+  /* ONE continuous background across the entire page */
+  background:
+    radial-gradient(1400px 1100px at 10% 10%, rgba(199, 107, 152, 0.30), transparent 68%),
+    radial-gradient(1400px 1100px at 90% 18%, rgba(240, 159, 156, 0.24), transparent 70%),
+    radial-gradient(1500px 1200px at 72% 95%, rgba(252, 195, 163, 0.18), transparent 68%),
+    radial-gradient(1100px 900px at 35% 70%, rgba(99, 43, 108, 0.22), transparent 72%),
+    linear-gradient(180deg, #270f36 0%, #210b30 52%, #180720 100%);
+
+  /* Helps the gradient feel “continuous” while scrolling */
+  background-attachment: fixed;
 }
 
-/* Subtle grain overlay to reduce visible banding/cuts */
+/* Mobile perf: fixed backgrounds can be janky */
+@media (max-width: 768px) {
+  body {
+    background-attachment: scroll;
+  }
+}
+
+/* Subtle grain overlay to reduce banding */
 body::before {
   content: "";
   position: fixed;
   inset: 0;
   pointer-events: none;
-  opacity: 0.075;
+  opacity: 0.085;
   mix-blend-mode: overlay;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23n)' opacity='.7'/%3E%3C/svg%3E");
+}
+
+/* Soft vignette so ends don’t feel like “panels” */
+body::after {
+  content: "";
+  position: fixed;
+  inset: -2px;
+  pointer-events: none;
+  background:
+    radial-gradient(1200px 900px at 50% 0%, rgba(0,0,0,0.00), rgba(0,0,0,0.18) 70%),
+    radial-gradient(1200px 900px at 50% 100%, rgba(0,0,0,0.00), rgba(0,0,0,0.22) 72%);
+  opacity: 0.55;
 }
 
 a {
@@ -286,7 +307,7 @@ h1 {
   color: var(--muted-2);
 }
 
-/* Subtle “listen” strip */
+/* Listen strip */
 .listen-strip {
   margin-top: 16px;
   padding: 14px;
@@ -335,12 +356,11 @@ h1 {
   justify-content: flex-end;
 }
 
-/* Decorative blobs */
 .hero-decor .blob {
   position: absolute;
   border-radius: 999px;
   filter: blur(44px);
-  opacity: 0.72;
+  opacity: 0.65;
   pointer-events: none;
 }
 .blob-1 {
@@ -365,19 +385,16 @@ h1 {
   background: rgba(252, 195, 163, 0.20);
 }
 
-/* Sections */
+/* Sections — transparent so the background never “cuts” */
 .section {
   padding: 54px 0;
+  background: transparent;
+  border: none;
 }
-
 .section-alt {
   padding: 64px 0;
-  /* Softer section blending vs hard “slab” */
-  background:
-    radial-gradient(900px 600px at 20% 20%, rgba(99, 43, 108, 0.18), transparent 62%),
-    radial-gradient(900px 600px at 80% 70%, rgba(199, 107, 152, 0.12), transparent 64%);
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  background: transparent;
+  border: none;
 }
 
 .section-head {
@@ -520,7 +537,8 @@ h2 {
 }
 
 .panel-cta {
-  background: linear-gradient(180deg, rgba(199, 107, 152, 0.14), rgba(255, 255, 255, 0.06));
+  background: rgba(255, 255, 255, 0.075);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   position: relative;
   overflow: hidden;
 }
@@ -528,11 +546,11 @@ h2 {
 .panel-cta::after {
   content: "";
   position: absolute;
-  inset: auto -120px -140px auto;
-  width: 320px;
-  height: 320px;
+  inset: auto -140px -160px auto;
+  width: 340px;
+  height: 340px;
   border-radius: 999px;
-  background: radial-gradient(circle at 40% 40%, rgba(252, 195, 163, 0.22), transparent 62%);
+  background: radial-gradient(circle at 40% 40%, rgba(252, 195, 163, 0.18), transparent 62%);
   filter: blur(26px);
 }
 
@@ -554,7 +572,7 @@ h2 {
   gap: 12px;
   padding: 12px;
   border-radius: 18px;
-  background: rgba(39, 15, 54, 0.26);
+  background: rgba(39, 15, 54, 0.22);
   border: 1px solid rgba(255, 255, 255, 0.10);
 }
 
@@ -585,9 +603,11 @@ h2 {
   font-size: 0.92rem;
 }
 
-/* CTA */
+/* CTA — keep as a glass box, no “section slab” */
 .cta {
   padding: 62px 0 74px;
+  background: transparent;
+  border: none;
 }
 
 .cta-box {
@@ -596,7 +616,9 @@ h2 {
   gap: 18px;
   padding: 22px;
   border-radius: calc(var(--r-xl) + 6px);
-  background: linear-gradient(135deg, rgba(99, 43, 108, 0.24), rgba(199, 107, 152, 0.15));
+
+  /* glass only (no strong gradient panel that reads like a new background) */
+  background: rgba(255, 255, 255, 0.07);
   border: 1px solid rgba(255, 255, 255, 0.12);
   box-shadow: var(--shadow);
   position: relative;
@@ -606,12 +628,13 @@ h2 {
 .cta-box::before {
   content: "";
   position: absolute;
-  inset: -100px auto auto -120px;
-  width: 360px;
-  height: 360px;
+  inset: -120px auto auto -140px;
+  width: 380px;
+  height: 380px;
   border-radius: 999px;
-  filter: blur(30px);
-  background: radial-gradient(circle at 35% 35%, rgba(252, 195, 163, 0.24), transparent 64%);
+  filter: blur(34px);
+  background: radial-gradient(circle at 35% 35%, rgba(252, 195, 163, 0.18), transparent 66%);
+  opacity: 0.9;
 }
 
 .cta-copy {
@@ -641,7 +664,7 @@ h2 {
   height: 22px;
   margin-right: 10px;
   border-radius: 8px;
-  background: rgba(252, 195, 163, 0.16);
+  background: rgba(252, 195, 163, 0.14);
   border: 1px solid rgba(255, 255, 255, 0.12);
 }
 
@@ -660,7 +683,6 @@ h2 {
   color: var(--muted);
 }
 
-/* Right CTA panel */
 .cta-panel {
   position: relative;
   z-index: 1;
@@ -688,7 +710,7 @@ h2 {
   margin: 0;
   padding: 10px 10px;
   border-radius: 18px;
-  background: rgba(39, 15, 54, 0.22);
+  background: rgba(39, 15, 54, 0.20);
   border: 1px solid rgba(255, 255, 255, 0.10);
   list-style-position: inside;
 }
@@ -742,11 +764,11 @@ h2 {
   box-shadow: 0 0 0 5px rgba(240, 159, 156, 0.10);
 }
 
-/* Footer */
+/* Footer — transparent so it doesn’t look like a new section background */
 .site-footer {
   padding: 34px 0 44px;
+  background: transparent;
   border-top: 1px solid rgba(255, 255, 255, 0.06);
-  background: rgba(0, 0, 0, 0.08);
 }
 
 .footer-grid {
